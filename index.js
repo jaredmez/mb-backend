@@ -1,9 +1,23 @@
 const express = require('express')
 const app = express()
+const mongoose = require('mongoose')
 
 const PORT = 3002
 
 app.use(express.json())
+
+// mongo connection str
+// mongodb+srv://jaredDB38:<password>@musiq-bx1.khom2.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+mongoose.connect(`mongodb+srv://jaredDB38:db1intr0@musiq-bx1.khom2.mongodb.net/mb-app?retryWrites=true&w=majority`)
+
+const songSchema = new mongoose.Schema({
+    artist: String,
+    artistId: String,
+    name: String,
+    playcount: String
+})
+
+const Song = mongoose.model('Song', songSchema);
 
 songs = [
     {
@@ -20,11 +34,26 @@ songs = [
     }
 ]
 
+
+
 app.get('/api/songs', (req, res) => {
     res.send(songs)
 })
 
 app.post('/api/songs', (req, res) => {
+    if(req.body.artist) {
+        const newSong = new Song({
+            artistId: req.body.artistId,
+            name: req.body.name,
+            artist: req.body.artist,
+            playcount: req.body.playcount
+        })
+        newSong.save();
+        res.send('will save to DB')
+    } else {
+        console.log(req.body.artist)
+        res.send('data not formatted')
+    }
     const data = req.body
     songs = [...songs, data]
     res.end()
