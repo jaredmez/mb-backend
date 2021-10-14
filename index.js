@@ -1,23 +1,12 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
-const mongoose = require('mongoose')
+const Song = require('./models/song')
 
-const PORT = 3002
+
+const PORT = process.env.PORT
 
 app.use(express.json())
-
-// mongo connection str
-// mongodb+srv://jaredDB38:<password>@musiq-bx1.khom2.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
-mongoose.connect(`mongodb+srv://jaredDB38:db1intr0@musiq-bx1.khom2.mongodb.net/mb-app?retryWrites=true&w=majority`)
-
-const songSchema = new mongoose.Schema({
-    artist: String,
-    artistId: String,
-    name: String,
-    playcount: String
-})
-
-const Song = mongoose.model('Song', songSchema);
 
 songs = [
     {
@@ -34,10 +23,11 @@ songs = [
     }
 ]
 
-
-
 app.get('/api/songs', (req, res) => {
-    res.send(songs)
+    Song.find({}).then(result => {
+        console.log(result);
+        res.json(result);
+    })
 })
 
 app.post('/api/songs', (req, res) => {
@@ -48,15 +38,13 @@ app.post('/api/songs', (req, res) => {
             artist: req.body.artist,
             playcount: req.body.playcount
         })
-        newSong.save();
-        res.send('will save to DB')
+        newSong.save()
+            .then(savedSong => res.json(savedSong))
     } else {
         console.log(req.body.artist)
-        res.send('data not formatted')
+        res.status(400).json({error: 'data not formatted correctly'})
     }
-    const data = req.body
-    songs = [...songs, data]
-    res.end()
+
 })
 
 app.listen(PORT, () => console.log('server now listening'))
