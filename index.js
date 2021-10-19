@@ -58,4 +58,13 @@ app.put('/api/songs/:id', async (req, res) => {
     
 })
 
+app.delete('/api/songs/:id', (req, res) => {
+    console.log(`delete song with id ${req.params.id}`)
+    Song.deleteOne({_id: req.params.id}, (err) => {
+        if (err) {
+            console.log(err);
+        }
+    })
+})
+
 app.listen(PORT, () => console.log('server now listening'))
