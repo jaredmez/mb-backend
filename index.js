@@ -2,10 +2,12 @@ require('dotenv').config()
 const express = require('express')
 const app = express()
 const Song = require('./models/song')
+const cors = require('cors')
 
 
 const PORT = process.env.PORT
 
+app.use(cors())
 app.use(express.json())
 
 songs = [
@@ -25,7 +27,6 @@ songs = [
 
 app.get('/api/songs', (req, res) => {
     Song.find({}).then(result => {
-        console.log(result);
         res.json(result);
     })
 })
@@ -36,15 +37,25 @@ app.post('/api/songs', (req, res) => {
             artistId: req.body.artistId,
             name: req.body.name,
             artist: req.body.artist,
-            playcount: req.body.playcount
+            playcount: req.body.playcount,
+            videoId: req.body.videoId
         })
         newSong.save()
             .then(savedSong => res.json(savedSong))
     } else {
-        console.log(req.body.artist)
         res.status(400).json({error: 'data not formatted correctly'})
     }
 
+})
+
+app.put('/api/songs/:id', async (req, res) => {
+    console.log(req.params.id)
+    const id = req.params.id;
+    const videoNum = req.body;
+    console.log(videoNum);
+    await Song.updateOne({_id: id}, {$set: videoNum}, {multi:true})
+    res.end();
+    
 })
 
 app.listen(PORT, () => console.log('server now listening'))

@@ -10,7 +10,8 @@ const songSchema = new mongoose.Schema({
     artist: String,
     artistId: String,
     name: String,
-    playcount: String
+    playcount: String,
+    videoId: String
 })
 
 songSchema.set('toJSON', {
