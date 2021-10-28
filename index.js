@@ -9,6 +9,7 @@ const PORT = process.env.PORT || 3002
 
 app.use(cors())
 app.use(express.json())
+app.use(express.static('build'))
 
 app.get('/api/songs', (req, res) => {
     Song.find({}).then(result => {
