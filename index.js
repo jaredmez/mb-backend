@@ -3,13 +3,14 @@ const express = require('express')
 const app = express()
 const Song = require('./models/song')
 const cors = require('cors')
-
+const usersRouter = require('./controllers/users')
 
 const PORT = process.env.PORT || 3002
 
 app.use(cors())
 app.use(express.json())
 app.use(express.static('build'))
+app.use('/api/users', usersRouter)
 
 app.get('/api/songs', (req, res) => {
     Song.find({}).then(result => {
